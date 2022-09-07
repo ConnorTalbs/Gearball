@@ -7,6 +7,12 @@ import random
 from operator import mod
 from turtle import right
 
+#Fix the gear iterations so that it doesn't switch without 6 full rotations in the correct direction
+#Fix the rotate by 90 function
+
+countH = 1
+countV = 1
+
 ball = [[['r'],['r','r','r'],['r'],['r','r','r'],['r'],['r','r','r'],['r']],
         [['y'],['y','y','y'],['y'],['y','y','y'],['y'],['y','y','y'],['y']],
         [['p'],['p','p','p'],['p'],['p','p','p'],['p'],['p','p','p'],['p']],
@@ -33,6 +39,7 @@ def printBall():
         print("          ",ball[i][6],"\n")
 
 def topClockWise():
+    global countH
     temp = ['','','']
     for i in range(3):
         temp[i] = ball[0][1][i]
@@ -41,9 +48,13 @@ def topClockWise():
             ball[i][1][j] = ball[i+1][1][j]
             if i == 3:
                 ball[i][1][j] = temp[j]
+    countH += 1
+    if countH % 6 == 0:
+        swapGearH()
     rotate90Clockwise()
 
 def topCounterCW():
+    global countH
     temp = ['','','']
     for i in range(3):
         temp[i] = ball[3][1][i]
@@ -51,7 +62,10 @@ def topCounterCW():
         for j in range(3):
             ball[i][1][j] = ball[i-1][1][j]
             if i == 0:
-                ball[i][1][j] = temp[j]         
+                ball[i][1][j] = temp[j]
+    countH -= 1 
+    if countH % 6 == 0:
+        swapGearH()
                 
 
 def bottomClockWise():
@@ -75,6 +89,7 @@ def bottomCounterCW():
                 ball[i][5][j] = temp[j]
 
 def rightClockWise():
+    global countV
     temp1 = ['','','']
     temp2 = ['','','']
     temp3 = ['','','']
@@ -91,6 +106,9 @@ def rightClockWise():
                     ball[i][j+1][2] = temp3[x]
                     ball[0][j+1][2] = temp1[x]
                     ball[5][j+1][2] = temp2[x]
+    countV += 1
+    if countV % 6 == 0:
+        swapGearV()
 
 def rightCounterCW():
     temp1 = ['','','']
@@ -162,14 +180,64 @@ def rotate90Clockwise():
             A[N - 1 - j][i] = A[N - 1 - i][N - 1 - j]
             A[N - 1 - i][N - 1 - j] = A[j][N - 1 - i]
             A[j][N - 1 - i] = temp
-    '''
-    for i in range(3):
-        for j in range(3):
-            temp = 
+ '''   
+    temp = A[0][0]
+    A[0][0] = A[2][0]
+    A[2][0] = A[2][2]
+    A[2][2] = A[0][2]
+    A[0][2] = temp
+
+    temp = A[0][1]
+    A[0][1] = A[1][0]
+    A[1][0] = A[2][1]
+    A[2][1] = A[1][2]
+    A[1][2] = temp
+    print("hi")
     # Reset
-    for i in range(3):
-        for j,x in zip(range(2,8,2),range(3)):
+    for j,i in zip(range(2,8,2), range(3)):
+        for x in range(3):
             ball[4][j-1][x] = A[i][x]
+
+def swapGearH():
+    temp1 = ball[3][4][0]
+    for i in range(4):
+        if i != 3:
+            temp = ball[i][4][0] 
+            ball[i][4][0] = ball[i+1][2][0]
+            ball[i+1][2][0] = temp
+        else:
+            ball[3][4][0] = ball[0][2][0]
+            ball[0][2][0] = temp1
+
+def swapGearV():
+    if ball[0][0][0] == 'r': 
+        ball[0][0][0] = 'b'
+        ball[4][6][0] = 'r'
+    else:
+        ball[0][0][0] = 'r'
+        ball[4][6][0] = 'b'
+
+    if ball[0][6][0] == 'r':
+        ball[0][6][0] = 'g'
+        ball[5][0][0] = 'r'
+    else:
+        ball[0][6][0] = 'r'
+        ball[5][0][0] = 'g'
+
+    if ball[5][6][0] == 'g':
+        ball[5][6][0] = 'p'
+        ball[2][6][0] = 'g'
+    else:
+        ball[5][6][0] = 'g'
+        ball[2][6][0] = 'p'
+
+    if ball[4][0][0] == 'b':
+        ball[4][0][0] = 'g'
+        ball[2][0][0] = 'p'
+    else:
+        ball[4][0][0] = 'b'
+        ball[2][0][0] = 'p'
+    
 
 def topCW():
     topClockWise()
@@ -199,18 +267,15 @@ def leftCCW():
 def main():
     choose = input("random or manual: ")
     if choose == "manual":
-        count = 1
         while(True):
             printBall()
             face,direc = input("Enter face and direction: ").split()
             if face == 't' and direc == 'cw':
                 topClockWise()
                 bottomCounterCW()
-                count += 1
             if face == 't' and direc == 'ccw':
                 topCounterCW()
                 bottomClockWise()
-                count += 1
             if face == 'b' and direc == 'cw':
                 bottomClockWise()
                 topCounterCW()
@@ -220,19 +285,15 @@ def main():
             if face == 'r' and direc == 'cw':
                 rightClockWise()
                 leftCounterCW()
-                count += 1
             if face == 'r' and direc == 'ccw':
                 rightCounterCW()
                 leftClockWise()
-                count += 1
             if face == 'l' and direc == 'cw':
                 leftClockWise()
                 rightCounterCW()
-                count += 1
             if face == 'l' and direc == 'ccw':
                 leftCounterCW()
                 rightClockWise()
-                count += 1
 
     if choose == "random":
         list = [topCW,topCCW,botCW,botCCW,rightCW,rightCCW,leftCW,leftCCW]
