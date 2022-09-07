@@ -33,39 +33,6 @@ def printBall():
         print("          ",ball[i][6],"\n")
 
 def topClockWise():
-    '''
-    temp = ['','','']
-    temp1 = ['','','']
-    temp2 = ['','','']
-    temp3 = ['','','']
-    temp4 = ['','','']
-    for i in range(3):
-        temp2[i] = ball[0][1][i]
-        temp3[i] = ball[1][1][i]
-    for i in range(4):
-        for j in range(3):
-            if i < 2:
-                temp[j] = ball[i][1][j]
-                ball[i][1][j] = ball[i+1][1][j]
-                ball[i+1][1][j] = temp[j]
-            if i == 2:
-                ball[i][1][j] = temp2[j]
-            if i == 3:
-                ball[i][1][j] = temp3[j]
-    
-    for i in range(3):
-        temp4[i] = ball[0][3][j]
-    for j in range(4):
-        for x in range(3):
-            if j !=3:
-                temp4[x] = ball[j][3][x]
-                ball[j][3][x] = ball[j+1][3][x]
-                ball[j+1][3][x] = temp4[x]
-            else:
-                ball[j][3][x] = temp4[x] 
-    
-    #rotate90degrees()
-    '''
     temp = ['','','']
     for i in range(3):
         temp[i] = ball[0][1][i]
@@ -74,41 +41,9 @@ def topClockWise():
             ball[i][1][j] = ball[i+1][1][j]
             if i == 3:
                 ball[i][1][j] = temp[j]
-    #rotate90Clockwise()
+    rotate90Clockwise()
 
 def topCounterCW():
-    '''
-    temp = ['','','']
-    temp1 = ['','','']
-    temp2 = ['','','']
-    temp3 = ['','','']
-    temp4 = ['','','']
-    for i in range(3):
-        temp2[i] = ball[2][1][i]
-        temp3[i] = ball[3][1][i]
-    for i in reversed(range(4)):
-        for j in reversed(range(3)):
-            if i > 1:
-                temp[j] = ball[i][1][j]
-                ball[i][1][j] = ball[i-2][1][j]
-                ball[i-2][1][j] = temp[j]
-            if i == 1:
-                ball[i][1][j] = temp3[j]
-            if i == 0:
-                ball[i][1][j] = temp2[j]
-    
-    #moving middle
-    for i in range(3):
-        temp4[i] = ball[3][3][j]
-    for j in reversed(range(4)):
-        for x in range(3):
-            if j !=0:
-                temp4[x] = ball[j][3][x]
-                ball[j][3][x] = ball[j-1][3][x]
-                ball[j-1][3][x] = temp4[x]
-            else:
-                ball[j][3][x] = temp4[x] 
-                '''
     temp = ['','','']
     for i in range(3):
         temp[i] = ball[3][1][i]
@@ -130,26 +65,6 @@ def bottomClockWise():
                 ball[i][5][j] = temp[j]
 
 def bottomCounterCW():
-    '''
-    temp = ['','','']
-    temp1 = ['','','']
-    temp2 = ['','','']
-    temp3 = ['','','']
-    temp4 = ['','','']
-    for i in range(3):
-        temp2[i] = ball[2][5][i]
-        temp3[i] = ball[3][5][i]
-    for i in reversed(range(4)):
-        for j in reversed(range(3)):
-            if i > 1:
-                temp[j] = ball[i][5][j]
-                ball[i][5][j] = ball[i-1][5][j]
-                ball[i-1][5][j] = temp[j]
-            if i == 1:
-                ball[i][5][j] = temp3[j]
-            if i == 0:
-                ball[i][5][j] = temp2[j]
-                '''
     temp = ['','','']
     for i in range(3):
         temp[i] = ball[3][5][i]
@@ -194,8 +109,6 @@ def rightCounterCW():
                     ball[2][j-1][2] = temp1[x]
                     ball[0][j-1][2] = temp3[x]
                     ball[5][j-1][2] = temp2[x]
-                    
-
 
 def leftClockWise():
     temp1 = ['','','']
@@ -234,22 +147,29 @@ def leftCounterCW():
                     ball[5][j-1][0] = temp2[x]
 
 def rotate90Clockwise():
+    # Setup
     A = [['','',''],['','',''],['','','']]
     for i in range(3):
         for j,x in zip(range(2,8,2),range(3)):
             A[i][x] = ball[4][j-1][x]
+    '''
+    # Rotate
     N = len(A[0])
-    for i in range(N // 2):
+    for i in range(3):
         for j in range(i, N - i - 1):
             temp = A[i][j]
             A[i][j] = A[N - 1 - j][i]
             A[N - 1 - j][i] = A[N - 1 - i][N - 1 - j]
             A[N - 1 - i][N - 1 - j] = A[j][N - 1 - i]
             A[j][N - 1 - i] = temp
+    '''
+    for i in range(3):
+        for j in range(3):
+            temp = 
+    # Reset
     for i in range(3):
         for j,x in zip(range(2,8,2),range(3)):
             ball[4][j-1][x] = A[i][x]
-    print(A)
 
 def topCW():
     topClockWise()
@@ -277,53 +197,50 @@ def leftCCW():
     rightClockWise()
 
 def main():
-    '''
-    count = 1
-    while(True):
-        printBall()
-        face,direc = input("Enter face and direction: ").split()
-        if face == 't' and direc == 'cw':
-            topClockWise()
-            bottomCounterCW()
-            count += 1
-        if face == 't' and direc == 'ccw':
-            topCounterCW()
-            bottomClockWise()
-            count += 1
-        if face == 'b' and direc == 'cw':
-            bottomClockWise()
-            topCounterCW()
-        if face == 'b' and direc == 'ccw':
-            bottomCounterCW()
-            topClockWise
-        if face == 'r' and direc == 'cw':
-            rightClockWise()
-            leftCounterCW()
-            count += 1
-        if face == 'r' and direc == 'ccw':
-            rightCounterCW()
-            leftClockWise()
-            count += 1
-        if face == 'l' and direc == 'cw':
-            leftClockWise()
-            rightCounterCW()
-            count += 1
-        if face == 'l' and direc == 'ccw':
-            leftCounterCW()
-            rightClockWise()
-            count += 1
-    #topRightTurn()
-    #topLeftTurn()
-    #bottomRightTurn()
-    #bottomLeftTurn()
-    '''
+    choose = input("random or manual: ")
+    if choose == "manual":
+        count = 1
+        while(True):
+            printBall()
+            face,direc = input("Enter face and direction: ").split()
+            if face == 't' and direc == 'cw':
+                topClockWise()
+                bottomCounterCW()
+                count += 1
+            if face == 't' and direc == 'ccw':
+                topCounterCW()
+                bottomClockWise()
+                count += 1
+            if face == 'b' and direc == 'cw':
+                bottomClockWise()
+                topCounterCW()
+            if face == 'b' and direc == 'ccw':
+                bottomCounterCW()
+                topClockWise
+            if face == 'r' and direc == 'cw':
+                rightClockWise()
+                leftCounterCW()
+                count += 1
+            if face == 'r' and direc == 'ccw':
+                rightCounterCW()
+                leftClockWise()
+                count += 1
+            if face == 'l' and direc == 'cw':
+                leftClockWise()
+                rightCounterCW()
+                count += 1
+            if face == 'l' and direc == 'ccw':
+                leftCounterCW()
+                rightClockWise()
+                count += 1
 
-    list = [topCW(),topCCW(),botCW(),botCCW(),rightCW(),rightCCW(),leftCW(),leftCCW()]
-    choice = input("How many moves would you like to make: ")
-    choice = int(choice)
-    while choice != 0:
-        random.choice(list)
-        choice -= 1
-    printBall()
+    if choose == "random":
+        list = [topCW,topCCW,botCW,botCCW,rightCW,rightCCW,leftCW,leftCCW]
+        user = input("How many moves would you like to make: ")
+        user = int(user)
+        while user != 0:
+            random.choice(list)()
+            user -= 1
+        printBall()
 
 main()
