@@ -7,9 +7,6 @@ import random
 from operator import mod
 from turtle import right
 
-#Fix the gear iterations so that it doesn't switch without 6 full rotations in the correct direction
-#Fix the rotate by 90 function
-
 countH = 1
 countV = 1
 
@@ -51,7 +48,7 @@ def topClockWise():
     countH += 1
     if countH % 6 == 0:
         swapGearH()
-    rotate90Clockwise()
+    rotate90Clockwise(4)
 
 def topCounterCW():
     global countH
@@ -66,7 +63,7 @@ def topCounterCW():
     countH -= 1 
     if countH % 6 == 0:
         swapGearH()
-                
+    rotate90CounterCW(4)
 
 def bottomClockWise():
     temp = ['','','']
@@ -77,6 +74,7 @@ def bottomClockWise():
             ball[i][5][j] = ball[i+1][5][j]
             if i == 3:
                 ball[i][5][j] = temp[j]
+    rotate90Clockwise(5)
 
 def bottomCounterCW():
     temp = ['','','']
@@ -87,6 +85,7 @@ def bottomCounterCW():
             ball[i][5][j] = ball[i-1][5][j]
             if i == 0:
                 ball[i][5][j] = temp[j]
+    rotate90CounterCW(5)
 
 def rightClockWise():
     global countV
@@ -109,6 +108,7 @@ def rightClockWise():
     countV += 1
     if countV % 6 == 0:
         swapGearV()
+    rotate90Clockwise(1)
 
 def rightCounterCW():
     temp1 = ['','','']
@@ -127,6 +127,7 @@ def rightCounterCW():
                     ball[2][j-1][2] = temp1[x]
                     ball[0][j-1][2] = temp3[x]
                     ball[5][j-1][2] = temp2[x]
+    rotate90CounterCW(1)
 
 def leftClockWise():
     temp1 = ['','','']
@@ -145,6 +146,7 @@ def leftClockWise():
                     ball[i][j+1][0] = temp3[x]
                     ball[0][j+1][0] = temp1[x]
                     ball[5][j+1][0] = temp2[x]
+    rotate90Clockwise(3)
 
 def leftCounterCW():
     temp1 = ['','','']
@@ -163,24 +165,15 @@ def leftCounterCW():
                     ball[2][j-1][0] = temp1[x]
                     ball[0][j-1][0] = temp3[x]
                     ball[5][j-1][0] = temp2[x]
+    rotate90CounterCW(3)
 
-def rotate90Clockwise():
+def rotate90Clockwise(face):
     # Setup
     A = [['','',''],['','',''],['','','']]
-    for i in range(3):
-        for j,x in zip(range(2,8,2),range(3)):
-            A[i][x] = ball[4][j-1][x]
-    '''
+    for j,i in zip(range(2,8,2),range(3)):
+        for x in range(3):
+            A[i][x] = ball[face][j-1][x]
     # Rotate
-    N = len(A[0])
-    for i in range(3):
-        for j in range(i, N - i - 1):
-            temp = A[i][j]
-            A[i][j] = A[N - 1 - j][i]
-            A[N - 1 - j][i] = A[N - 1 - i][N - 1 - j]
-            A[N - 1 - i][N - 1 - j] = A[j][N - 1 - i]
-            A[j][N - 1 - i] = temp
- '''   
     temp = A[0][0]
     A[0][0] = A[2][0]
     A[2][0] = A[2][2]
@@ -192,11 +185,34 @@ def rotate90Clockwise():
     A[1][0] = A[2][1]
     A[2][1] = A[1][2]
     A[1][2] = temp
-    print("hi")
     # Reset
     for j,i in zip(range(2,8,2), range(3)):
         for x in range(3):
-            ball[4][j-1][x] = A[i][x]
+            ball[face][j-1][x] = A[i][x]
+
+def rotate90CounterCW(face):
+    # Setup
+    A = [['','',''],['','',''],['','','']]
+    for j,i in zip(range(2,8,2),range(3)):
+        for x in range(3):
+            A[i][x] = ball[face][j-1][x]
+    # Rotate
+    temp = A[0][0]
+    A[0][0] = A[0][2]
+    A[0][2] = A[2][2]
+    A[2][2] = A[2][0]
+    A[2][0] = temp
+
+    temp = A[0][1]
+    A[0][1] = A[1][2]
+    A[1][2] = A[2][1]
+    A[2][1] = A[1][0]
+    A[1][0] = temp
+    
+    # Reset
+    for j,i in zip(range(2,8,2), range(3)):
+        for x in range(3):
+            ball[face][j-1][x] = A[i][x]
 
 def swapGearH():
     temp1 = ball[3][4][0]
