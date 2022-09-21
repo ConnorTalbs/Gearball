@@ -253,6 +253,44 @@ def swapGearV():
     else:
         ball[4][0][0] = 'b'
         ball[2][0][0] = 'p'
+
+def checkState(ball, goal):
+    close = 0
+    for i in range(6):
+        for j in range(0,6,2):
+            for x in range(3):
+                if ball[i][j+1][x] == goal[i][j+1][x]:
+                    close += 1
+    for i in range(6):
+        for j in range(0,6,2):
+            if ball[i][j+1][0] == goal[i][j+1][x]:
+                close += 1
+    return close
+
+def solveAStar():
+    goal = [[['r'],['r','r','r'],['r'],['r','r','r'],['r'],['r','r','r'],['r']],
+            [['y'],['y','y','y'],['y'],['y','y','y'],['y'],['y','y','y'],['y']],
+            [['p'],['p','p','p'],['p'],['p','p','p'],['p'],['p','p','p'],['p']],
+            [['o'],['o','o','o'],['o'],['o','o','o'],['o'],['o','o','o'],['o']],
+            [['b'],['b','b','b'],['b'],['b','b','b'],['b'],['b','b','b'],['b']],
+            [['g'],['g','g','g'],['g'],['g','g','g'],['g'],['g','g','g'],['g']]]
+
+    open = []
+    closed = []
+
+    neighborsCW = [topCW,botCW,rightCW,leftCW]
+    neighborsCCW = [topCCW,botCCW,rightCCW,leftCCW]
+
+    print(checkState(ball, goal))
+
+    while(True):
+        if ball == goal:
+            printBall()
+            print('Solved!')
+            break
+        else: break
+    
+
     
 
 def topCW():
@@ -310,14 +348,18 @@ def main():
             if face == 'l' and direc == 'ccw':
                 leftCounterCW()
                 rightClockWise()
+            solveAStar()
 
     if choose == "random":
         list = [topCW,topCCW,botCW,botCCW,rightCW,rightCCW,leftCW,leftCCW]
+        listCW = [topCW, botCW, rightCW, leftCW]
+        listCCW = [topCCW, botCCW, rightCCW, leftCCW]
         user = input("How many moves would you like to make: ")
         user = int(user)
         while user != 0:
-            random.choice(list)()
+            random.choice(listCW)()
             user -= 1
         printBall()
+        solveAStar()
 
 main()
