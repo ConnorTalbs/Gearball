@@ -3,9 +3,11 @@
 #8/30/2022
 #Build a program that displays and randomizes a gearball
 #########################################################
+from asyncio.windows_events import NULL
 import random
 from operator import mod
 from turtle import right
+import heapq
 
 countH = 1
 countV = 1
@@ -253,44 +255,6 @@ def swapGearV():
     else:
         ball[4][0][0] = 'b'
         ball[2][0][0] = 'p'
-
-def checkState(ball, goal):
-    close = 0
-    for i in range(6):
-        for j in range(0,6,2):
-            for x in range(3):
-                if ball[i][j+1][x] == goal[i][j+1][x]:
-                    close += 1
-    for i in range(6):
-        for j in range(0,6,2):
-            if ball[i][j+1][0] == goal[i][j+1][x]:
-                close += 1
-    return close
-
-def solveAStar():
-    goal = [[['r'],['r','r','r'],['r'],['r','r','r'],['r'],['r','r','r'],['r']],
-            [['y'],['y','y','y'],['y'],['y','y','y'],['y'],['y','y','y'],['y']],
-            [['p'],['p','p','p'],['p'],['p','p','p'],['p'],['p','p','p'],['p']],
-            [['o'],['o','o','o'],['o'],['o','o','o'],['o'],['o','o','o'],['o']],
-            [['b'],['b','b','b'],['b'],['b','b','b'],['b'],['b','b','b'],['b']],
-            [['g'],['g','g','g'],['g'],['g','g','g'],['g'],['g','g','g'],['g']]]
-
-    open = []
-    closed = []
-
-    neighborsCW = [topCW,botCW,rightCW,leftCW]
-    neighborsCCW = [topCCW,botCCW,rightCCW,leftCCW]
-
-    print(checkState(ball, goal))
-
-    while(True):
-        if ball == goal:
-            printBall()
-            print('Solved!')
-            break
-        else: break
-    
-
     
 
 def topCW():
@@ -317,6 +281,110 @@ def leftCW():
 def leftCCW():
     leftCounterCW()
     rightClockWise()
+
+def checkState(ball, goal):
+    close = 0
+    for i in range(6):
+        for j in range(0,6,2):
+            for x in range(3):
+                if ball[i][j+1][x] == goal[i][j+1][x]:
+                    close += 1
+    for i in range(6):
+        for j in range(0,6,2):
+            if ball[i][j+1][0] == goal[i][j+1][x]:
+                close += 1
+    return close
+
+def solveAStar(ball):
+
+    class node:
+        def __init__(self, state, parent, depth, heuristic):
+            self.state = state
+            self.parent = parent
+            self.depth = depth
+            self.heuristic = heuristic
+
+    #Must have state representation
+    #Must have child function
+    #Must check for solved state immediately before applying child function
+    #Must add f and g functions
+    #Must use heap/priority queue correctly & appropriately
+
+    goal = [[['r'],['r','r','r'],['r'],['r','r','r'],['r'],['r','r','r'],['r']],
+            [['y'],['y','y','y'],['y'],['y','y','y'],['y'],['y','y','y'],['y']],
+            [['p'],['p','p','p'],['p'],['p','p','p'],['p'],['p','p','p'],['p']],
+            [['o'],['o','o','o'],['o'],['o','o','o'],['o'],['o','o','o'],['o']],
+            [['b'],['b','b','b'],['b'],['b','b','b'],['b'],['b','b','b'],['b']],
+            [['g'],['g','g','g'],['g'],['g','g','g'],['g'],['g','g','g'],['g']]]
+
+    open = []
+    closed = []
+    path = []
+    selNode = [0]
+    listCCW = [topCCW, botCCW, rightCCW, leftCCW]
+    heapq.heapify(path)
+
+    open.append(node(ball, NULL, 0, checkState(ball, goal)))
+
+    while(True):
+        #printBall()
+        #Takes lowest heuristic from open
+        max = 0
+        index = 0
+        for i in range(len(open)):
+            #print(open[i].heuristic)
+            if open[i].heuristic > max:
+                selNode[0] = open[i]
+                #print(selNode[0].heuristic)
+                print(i)
+        #Checks if open is empty and returns False
+        if open == NULL:
+            return False
+        #Removes selected node from open
+        open.remove(selNode[0])
+        #If selected Node is goal state then return state and False
+        if selNode[0].state == goal or selNode[0].heuristic == 72:
+            print('Solved!')
+            selNode
+            return ball,False
+        else:
+            print('Not Solved!')
+        #Gets children of selected state
+        newNodes = []
+        closed.append(selNode[0])
+        #Getting children of selected node
+        for i in range(4):
+            newNodes.append(node(ball, selNode[0], selNode[0].depth + 1, checkState(ball ,goal)))
+        for i,j in zip(newNodes,range(4)):
+            if j == 0:
+                topCCW()
+                i.state = ball
+                i.heuristic = checkState(ball, goal)
+                topCW()
+                if i.state != ball:
+                    open.append(i)
+            if j == 1:
+                botCCW()
+                i.state = ball
+                i.heuristic = checkState(ball, goal)
+                botCW()
+                if i.state != ball:
+                    open.append(i)
+            if j == 2:
+                rightCCW()
+                i.state = ball
+                i.heuristic = checkState(ball, goal)
+                rightCW()
+                if i.state != ball:
+                    open.append(i)
+            if j == 3:
+                leftCCW()
+                i.state = ball
+                i.heuristic = checkState(ball, goal)
+                leftCW()
+                if i.state != ball:
+                    open.append(i)
+
 
 def main():
     choose = input("random or manual: ")
@@ -348,18 +416,18 @@ def main():
             if face == 'l' and direc == 'ccw':
                 leftCounterCW()
                 rightClockWise()
-            solveAStar()
 
     if choose == "random":
         list = [topCW,topCCW,botCW,botCCW,rightCW,rightCCW,leftCW,leftCCW]
         listCW = [topCW, botCW, rightCW, leftCW]
+        listCWT = [topCW]
         listCCW = [topCCW, botCCW, rightCCW, leftCCW]
+
         user = input("How many moves would you like to make: ")
         user = int(user)
         while user != 0:
-            random.choice(listCW)()
+            random.choice(listCWT)()
             user -= 1
+        solveAStar(ball)
         printBall()
-        solveAStar()
-
 main()
